@@ -51,17 +51,11 @@ def cmd_suggest(args):
             print(json.dumps(results, indent=2))
         else:
             print(f"\nFound {len(results)} suggestions for '{args.query}':\n")
+            print("Note: Use 'godaddycheck check <domain>' to check availability and pricing.\n")
 
             for i, result in enumerate(results, 1):
                 domain = result.get("domain", "N/A")
-                available = result.get("available", False)
-                price = result.get("price")
-                currency = result.get("currency", "USD")
-
-                status = "Available" if available else "Taken"
-                print(f"{i}. {domain} - {status}")
-                if available and price is not None:
-                    print(f"   Price: {format_price(price, currency)}")
+                print(f"{i}. {domain}")
 
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)

@@ -64,9 +64,10 @@ class TestIntegrationSuggest:
         assert len(results) > 0
 
         # Check first result structure
+        # Note: GoDaddy API only returns domain names, not availability
         first = results[0]
         assert "domain" in first
-        assert "available" in first
+        assert isinstance(first["domain"], str)
 
     def test_suggest_with_different_limits(self, skip_without_credentials):
         """Test suggestions with different limits."""

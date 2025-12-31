@@ -171,22 +171,24 @@ class GoDaddyClient:
         """
         Get domain suggestions for a keyword.
 
+        Note: The GoDaddy API only returns domain names. To check availability
+        and pricing, use the check() method for each suggested domain.
+
         Args:
             query: Keyword to get suggestions for
             limit: Maximum number of suggestions (default: 10)
 
         Returns:
             List of dicts with keys:
-                - domain: str
-                - available: bool
-                - price: float (in dollars, if available)
-                - currency: str
+                - domain: str (domain name suggestion)
 
         Example:
             >>> client = GoDaddyClient()
             >>> suggestions = client.suggest('tech', limit=5)
             >>> for s in suggestions:
-            ...     print(f"{s['domain']}: ${s.get('price', 'N/A')}")
+            ...     domain = s['domain']
+            ...     availability = client.check(domain)
+            ...     print(f"{domain}: Available={availability['available']}")
         """
         url = f"{self.api_url}/v1/domains/suggest"
         params = {"query": query, "limit": limit}
@@ -195,7 +197,8 @@ class GoDaddyClient:
         results = response.json()
 
         if isinstance(results, list):
-            return [self._normalize_result(r) for r in results]
+            # API only returns domain names, no normalization needed
+            return results
         return results
 
     def tlds(self) -> List[Dict[str, Any]]:

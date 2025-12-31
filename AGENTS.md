@@ -112,7 +112,8 @@ GET /v1/domains/available?domain={domain}&checkType={FAST|FULL}
 GET /v1/domains/suggest?query={keyword}&limit={number}
 ```
 - Returns array of domain suggestions
-- Each includes: domain, available, price, currency
+- Each includes: domain (domain name only)
+- Note: Does NOT include availability or price. Use check() method for each domain to get availability.
 
 ### 3. List TLDs
 ```
