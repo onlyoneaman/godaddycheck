@@ -1,6 +1,17 @@
 # godaddycheck
 
+[![PyPI version](https://img.shields.io/pypi/v/godaddycheck.svg)](https://pypi.org/project/godaddycheck/)
+[![Python](https://img.shields.io/pypi/pyversions/godaddycheck.svg)](https://pypi.org/project/godaddycheck/)
+[![License](https://img.shields.io/pypi/l/godaddycheck.svg)](https://pypi.org/project/godaddycheck/)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/onlyoneaman/godaddycheck)
+[![Downloads](https://img.shields.io/pypi/dm/godaddycheck.svg)](https://pypi.org/project/godaddycheck/)
+[![Downloads/week](https://img.shields.io/pypi/dw/godaddycheck.svg)](https://pypi.org/project/godaddycheck/)
+
+> **Built by [aman](https://amankumar.ai) | [@onlyoneaman](https://x.com/onlyoneaman)**
+
 Simple Python package and CLI tool for checking domain availability using the GoDaddy API.
+
+**⭐ If you find this project useful, please consider giving it a star and forking it!**
 
 ## Features
 
@@ -10,6 +21,7 @@ Simple Python package and CLI tool for checking domain availability using the Go
 - Built-in retry logic with exponential backoff
 - Both library and CLI interface
 - Automatic price normalization
+- Support for GoDaddy OTE (Operational Test Environment) via `GODADDY_API_URL`
 
 ## Installation
 
@@ -20,7 +32,7 @@ pip install godaddycheck
 Or install from source:
 
 ```bash
-git clone https://github.com/yourusername/godaddycheck.git
+git clone https://github.com/onlyoneaman/godaddycheck.git
 cd godaddycheck
 pip install -e .
 ```
@@ -36,11 +48,18 @@ export GODADDY_API_KEY="your_api_key"
 export GODADDY_API_SECRET="your_api_secret"
 ```
 
+For GoDaddy OTE (test environment), also set:
+
+```bash
+export GODADDY_API_URL="https://api.ote-godaddy.com"
+```
+
 Or create a `.env` file:
 
-```
+```env
 GODADDY_API_KEY=your_api_key
 GODADDY_API_SECRET=your_api_secret
+GODADDY_API_URL=https://api.godaddy.com  # Optional, defaults to production
 ```
 
 ## Usage
@@ -116,7 +135,7 @@ print(f"Found {len(tlds)} TLDs")
 ```python
 from godaddycheck import GoDaddyClient
 
-# Initialize client
+# Initialize client (uses environment variables by default)
 client = GoDaddyClient()
 
 # Check domain
@@ -154,6 +173,7 @@ from godaddycheck import GoDaddyClient
 client = GoDaddyClient(
     api_key='your_key',
     api_secret='your_secret',
+    api_url='https://api.ote-godaddy.com',  # Optional
     max_retries=5,
     timeout=60.0
 )
@@ -234,8 +254,12 @@ except Exception as e:
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/godaddycheck.git
+git clone https://github.com/onlyoneaman/godaddycheck.git
 cd godaddycheck
+
+# Create virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install in development mode
 pip install -e .
@@ -245,6 +269,9 @@ pip install -e ".[dev]"
 
 # Run tests
 pytest
+
+# Run tests with coverage
+pytest --cov=godaddycheck --cov-report=html
 ```
 
 ## Requirements
@@ -252,14 +279,89 @@ pytest
 - Python >= 3.7
 - httpx >= 0.24.0
 
+## Best Practices
+
+### Virtual Environment
+
+Always use a virtual environment when working with Python packages:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install godaddycheck
+```
+
+### Environment Variables
+
+Store sensitive credentials in environment variables or `.env` files (never commit them):
+
+```bash
+# .env file (add to .gitignore)
+GODADDY_API_KEY=your_key
+GODADDY_API_SECRET=your_secret
+```
+
+### Error Handling
+
+Always wrap API calls in try-except blocks:
+
+```python
+try:
+    result = godaddycheck.check('example.com')
+except Exception as e:
+    # Handle error appropriately
+    print(f"Error: {e}")
+```
+
+### Resource Management
+
+Use context managers to ensure proper cleanup:
+
+```python
+# Good: Automatic cleanup
+with GoDaddyClient() as client:
+    result = client.check('example.com')
+
+# Also good: Manual cleanup
+client = GoDaddyClient()
+try:
+    result = client.check('example.com')
+finally:
+    client.close()
+```
+
+### Type Hints
+
+The package uses type hints for better IDE support:
+
+```python
+from godaddycheck import GoDaddyClient
+from typing import Dict, Any
+
+def check_domain(domain: str) -> Dict[str, Any]:
+    client = GoDaddyClient()
+    return client.check(domain)
+```
+
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Credits
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-Inspired by the bella project's GoDaddy service implementation.
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/onlyoneaman/godaddycheck/issues)
+- **Author**: [aman](https://amankumar.ai) | [@onlyoneaman](https://x.com/onlyoneaman)
+
+---
+
+**⭐ Star this repo if you find it useful!**
