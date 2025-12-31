@@ -70,13 +70,13 @@ GODADDY_API_URL=https://api.godaddy.com  # Optional, defaults to production
 
 ```bash
 # Quick check
-godaddycheck check example.com
+godaddycheck check amankumar.ai
 
 # Full check with more details
-godaddycheck check example.com --type FULL
+godaddycheck check amankumar.ai --type FULL
 
 # JSON output
-godaddycheck check example.com --json
+godaddycheck check amankumar.ai --json
 ```
 
 #### Get domain suggestions
@@ -116,7 +116,7 @@ godaddycheck tlds --json
 import godaddycheck
 
 # Check a domain
-result = godaddycheck.check('example.com')
+result = godaddycheck.check('amankumar.ai')
 print(f"Available: {result['available']}")
 print(f"Price: ${result.get('price', 'N/A')}")
 
@@ -139,7 +139,7 @@ from godaddycheck import GoDaddyClient
 client = GoDaddyClient()
 
 # Check domain
-result = client.check('example.com', check_type='FAST')
+result = client.check('amankumar.ai', check_type='FAST')
 print(result)
 
 # Get suggestions
@@ -160,7 +160,7 @@ client.close()
 from godaddycheck import GoDaddyClient
 
 with GoDaddyClient() as client:
-    result = client.check('example.com')
+    result = client.check('amankumar.ai')
     print(result)
 # Client automatically closed
 ```
@@ -178,7 +178,7 @@ client = GoDaddyClient(
     timeout=60.0
 )
 
-result = client.check('example.com')
+result = client.check('amankumar.ai')
 ```
 
 ## API Response Examples
@@ -187,7 +187,7 @@ result = client.check('example.com')
 
 ```json
 {
-  "domain": "example.com",
+  "domain": "amankumar.ai",
   "available": false,
   "currency": "USD"
 }
@@ -284,7 +284,7 @@ Use context managers for automatic cleanup:
 
 ```python
 with GoDaddyClient() as client:
-    result = client.check('example.com')
+    result = client.check('amankumar.ai')
 ```
 
 ## License
@@ -304,7 +304,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/onlyoneaman/godaddycheck/issues)
-- **Author**: [aman](https://amankumar.ai) | [@onlyoneaman](https://x.com/onlyoneaman)
+- **Author**: **Aman** - hi@amankumar.ai | [amankumar.ai](https://amankumar.ai) | [@onlyoneaman](https://x.com/onlyoneaman)
 
 ---
 

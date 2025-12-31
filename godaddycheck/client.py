@@ -141,7 +141,7 @@ class GoDaddyClient:
         Check if a domain is available.
 
         Args:
-            domain: Domain name to check (e.g., 'example.com')
+            domain: Domain name to check (e.g., 'amankumar.ai')
             check_type: 'FAST' or 'FULL' (default: 'FAST')
 
         Returns:
@@ -153,7 +153,7 @@ class GoDaddyClient:
 
         Example:
             >>> client = GoDaddyClient()
-            >>> result = client.check('example.com')
+            >>> result = client.check('amankumar.ai')
             >>> print(f"Available: {result['available']}, Price: ${result.get('price', 'N/A')}")
         """
         url = f"{self.api_url}/v1/domains/available"
