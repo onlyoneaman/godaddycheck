@@ -67,29 +67,23 @@ class GoDaddyClient:
         Normalize price to dollars.
 
         Args:
-            price: Price value (could be in micro-dollars, cents, or dollars)
+            price: Price value in currency-micro-unit (micro-dollars)
 
         Returns:
             Price in dollars, or None if invalid
 
         Note:
-            GoDaddy API returns prices in different formats:
-            - Micro-dollars (1/1,000,000): e.g., 423980000 = $423.98
-            - Cents (1/100): e.g., 1299 = $12.99
-            - Dollars: e.g., 12.99 = $12.99
+            GoDaddy API always returns prices in currency-micro-unit format.
+            Divide by 1,000,000 to convert to dollars.
+            Example: 423980000 micro-dollars = $423.98
         """
         if price is None:
             return None
 
         try:
             price_float = float(price)
-            
-            # Handle micro-dollars (values >= 1,000,000)
-            if price_float >= 1_000_000:
-                return price_float / 1_000_000
-            
-            # Already in dollars
-            return price_float
+            # GoDaddy API always returns prices in micro-dollars (1/1,000,000)
+            return price_float / 1_000_000
         except (ValueError, TypeError):
             return None
 
@@ -149,20 +143,23 @@ class GoDaddyClient:
 
         raise last_error
 
-    def check(self, domain: str, check_type: str = "FAST") -> Dict[str, Any]:
+    def check(self, domain: str, check_type: str = "FAST", raw: bool = False) -> Dict[str, Any]:
         """
         Check if a domain is available.
 
         Args:
             domain: Domain name to check (e.g., 'amankumar.ai')
             check_type: 'FAST' or 'FULL' (default: 'FAST')
+            raw: If True, return raw API response without normalization (default: False)
 
         Returns:
             Dict with keys:
                 - domain: str
                 - available: bool
-                - price: float (in dollars, if available)
+                - price: float (in dollars, if available and not raw)
                 - currency: str
+                - period: int (number of years, if available)
+                - definitive: bool (if available)
 
         Example:
             >>> client = GoDaddyClient()
@@ -174,6 +171,9 @@ class GoDaddyClient:
 
         response = self._retry_request("GET", url, params=params)
         result = response.json()
+        
+        if raw:
+            return result
         return self._normalize_result(result)
 
     def suggest(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
@@ -248,20 +248,21 @@ class GoDaddyClient:
 
 
 # Convenience functions for simple usage
-def check(domain: str, check_type: str = "FAST", **client_kwargs) -> Dict[str, Any]:
+def check(domain: str, check_type: str = "FAST", raw: bool = False, **client_kwargs) -> Dict[str, Any]:
     """
     Check if a domain is available (convenience function).
 
     Args:
         domain: Domain name to check
         check_type: 'FAST' or 'FULL'
+        raw: If True, return raw API response without normalization
         **client_kwargs: Additional arguments for GoDaddyClient
 
     Returns:
         Domain availability information
     """
     with GoDaddyClient(**client_kwargs) as client:
-        return client.check(domain, check_type)
+        return client.check(domain, check_type, raw=raw)
 
 
 def suggest(query: str, limit: int = 10, **client_kwargs) -> List[Dict[str, Any]]:

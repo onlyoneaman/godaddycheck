@@ -62,13 +62,13 @@ def sample_suggest_response():
         {
             "domain": "techstartup.com",
             "available": True,
-            "price": 1299,  # In cents
+            "price": 129900000,  # In micro-dollars
             "currency": "USD"
         },
         {
             "domain": "mytech.io",
             "available": True,
-            "price": 3999,  # In cents
+            "price": 399900000,  # In micro-dollars
             "currency": "USD"
         }
     ]

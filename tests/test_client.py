@@ -65,12 +65,13 @@ class TestClientInitialization:
 class TestPriceNormalization:
     """Tests for price normalization."""
 
-    def test_normalize_price_cents_to_dollars(self, mock_credentials):
-        """Test converting cents to dollars."""
+    def test_normalize_price_micro_dollars_only(self, mock_credentials):
+        """Test converting micro-dollars to dollars."""
         client = GoDaddyClient()
-        assert client._normalize_price(1299) == 12.99
-        assert client._normalize_price(3999) == 39.99
-        assert client._normalize_price(10000) == 100.0
+        # GoDaddy API always returns in micro-dollars
+        assert client._normalize_price(129900000) == 129.90
+        assert client._normalize_price(399900000) == 399.90
+        assert client._normalize_price(100000000) == 100.0
 
     def test_normalize_price_micro_dollars(self, mock_credentials):
         """Test converting micro-dollars to dollars."""
@@ -80,12 +81,13 @@ class TestPriceNormalization:
         assert client._normalize_price(129900000) == 129.90
         assert client._normalize_price(1000000) == 1.0
 
-    def test_normalize_price_already_dollars(self, mock_credentials):
-        """Test prices already in dollars."""
+    def test_normalize_price_small_values(self, mock_credentials):
+        """Test small micro-dollar values."""
         client = GoDaddyClient()
-        assert client._normalize_price(12.99) == 12.99
-        assert client._normalize_price(39.99) == 39.99
-        assert client._normalize_price(100.0) == 100.0
+        # Even small values are in micro-dollars
+        assert client._normalize_price(1000000) == 1.0  # $1.00
+        assert client._normalize_price(100000) == 0.10  # $0.10
+        assert client._normalize_price(10000) == 0.01  # $0.01
 
     def test_normalize_price_none(self, mock_credentials):
         """Test normalizing None."""
@@ -104,7 +106,7 @@ class TestPriceNormalization:
         client = GoDaddyClient()
         result = sample_suggest_response[0]
         normalized = client._normalize_result(result)
-        assert normalized["price"] == 12.99  # Converted from 1299 cents
+        assert normalized["price"] == 129.90  # Converted from 129900000 micro-dollars
 
 
 class TestHeaders:
@@ -150,7 +152,7 @@ class TestConvenienceFunctions:
 
         result = check("test.com")
         assert result["domain"] == "test.com"
-        mock_check.assert_called_once_with("test.com", "FAST")
+        mock_check.assert_called_once_with("test.com", "FAST", raw=False)
 
     @patch("godaddycheck.client.GoDaddyClient.suggest")
     def test_convenience_suggest(self, mock_suggest, mock_credentials):

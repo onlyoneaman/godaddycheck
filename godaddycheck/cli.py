@@ -20,21 +20,24 @@ def cmd_check(args):
     """Handle check command."""
     try:
         client = GoDaddyClient()
-        result = client.check(args.domain, check_type=args.type)
+        result = client.check(args.domain, check_type=args.type, raw=args.full)
 
-        if args.json:
+        if args.json or args.full:
             print(json.dumps(result, indent=2))
         else:
             domain = result.get("domain", args.domain)
             available = result.get("available", False)
             price = result.get("price")
             currency = result.get("currency", "USD")
+            period = result.get("period")
 
             status = "Available" if available else "Taken"
             print(f"\nDomain: {domain}")
             print(f"Status: {status}")
             if available and price is not None:
                 print(f"Price: {format_price(price, currency)}")
+                if period is not None:
+                    print(f"Period: {period} year{'s' if period != 1 else ''}")
 
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
@@ -97,6 +100,7 @@ def main():
 Examples:
   godaddycheck check example.com
   godaddycheck check example.com --type FULL
+  godaddycheck check example.com --full
   godaddycheck suggest tech --limit 5
   godaddycheck tlds --limit 20
   godaddycheck check example.com --json
@@ -120,6 +124,7 @@ Environment variables:
         help="Check type (default: FAST)"
     )
     parser_check.add_argument("--json", action="store_true", help="Output as JSON")
+    parser_check.add_argument("--full", action="store_true", help="Return raw API response without normalization")
     parser_check.set_defaults(func=cmd_check)
 
     # Suggest command
