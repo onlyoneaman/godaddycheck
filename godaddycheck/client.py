@@ -67,19 +67,33 @@ class GoDaddyClient:
         Normalize price to dollars.
 
         Args:
-            price: Price value (could be in cents or micro-dollars)
+            price: Price value (could be in micro-dollars, cents, or dollars)
 
         Returns:
             Price in dollars, or None if invalid
+
+        Note:
+            GoDaddy API returns prices in different formats:
+            - Micro-dollars (1/1,000,000): e.g., 423980000 = $423.98
+            - Cents (1/100): e.g., 1299 = $12.99
+            - Dollars: e.g., 12.99 = $12.99
         """
         if price is None:
             return None
 
         try:
             price_float = float(price)
-            # GoDaddy API returns prices in cents, convert to dollars
-            if price_float > 1000:
+            
+            # Handle micro-dollars (values >= 1,000,000)
+            if price_float >= 1_000_000:
+                return price_float / 1_000_000
+            
+            # Handle cents (values >= 1000 but < 1,000,000)
+            # Note: prices < 1000 are likely already in dollars
+            if price_float >= 1000:
                 return price_float / 100
+            
+            # Already in dollars
             return price_float
         except (ValueError, TypeError):
             return None

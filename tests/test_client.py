@@ -72,6 +72,14 @@ class TestPriceNormalization:
         assert client._normalize_price(3999) == 39.99
         assert client._normalize_price(10000) == 100.0
 
+    def test_normalize_price_micro_dollars(self, mock_credentials):
+        """Test converting micro-dollars to dollars."""
+        client = GoDaddyClient()
+        # GoDaddy API returns prices in micro-dollars (1/1,000,000)
+        assert client._normalize_price(423980000) == 423.98
+        assert client._normalize_price(129900000) == 129.90
+        assert client._normalize_price(1000000) == 1.0
+
     def test_normalize_price_already_dollars(self, mock_credentials):
         """Test prices already in dollars."""
         client = GoDaddyClient()
