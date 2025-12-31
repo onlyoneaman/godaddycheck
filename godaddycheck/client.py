@@ -7,6 +7,10 @@ import time
 from typing import List, Dict, Any, Optional
 from functools import wraps
 import httpx
+from dotenv import load_dotenv
+
+# Load .env file if it exists
+load_dotenv()
 
 
 class GoDaddyClient:

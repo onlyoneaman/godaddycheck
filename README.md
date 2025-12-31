@@ -54,13 +54,15 @@ For GoDaddy OTE (test environment), also set:
 export GODADDY_API_URL="https://api.ote-godaddy.com"
 ```
 
-Or create a `.env` file:
+Or create a `.env` file in your project directory (automatically loaded):
 
 ```env
 GODADDY_API_KEY=your_api_key
 GODADDY_API_SECRET=your_api_secret
 GODADDY_API_URL=https://api.godaddy.com  # Optional, defaults to production
 ```
+
+The package automatically loads `.env` files, so you don't need to manually export variables.
 
 ## Usage
 
