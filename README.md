@@ -227,29 +227,6 @@ result = client.check('example.com')
 ]
 ```
 
-## Error Handling
-
-The package automatically retries failed requests with exponential backoff for:
-- Network errors
-- Timeouts
-- Rate limiting (429)
-- Server errors (5xx)
-
-```python
-from godaddycheck import GoDaddyClient
-import httpx
-
-try:
-    client = GoDaddyClient()
-    result = client.check('example.com')
-except ValueError as e:
-    print(f"Configuration error: {e}")
-except httpx.HTTPStatusError as e:
-    print(f"API error: {e}")
-except Exception as e:
-    print(f"Unexpected error: {e}")
-```
-
 ## Development
 
 ```bash
@@ -301,46 +278,13 @@ GODADDY_API_KEY=your_key
 GODADDY_API_SECRET=your_secret
 ```
 
-### Error Handling
-
-Always wrap API calls in try-except blocks:
-
-```python
-try:
-    result = godaddycheck.check('example.com')
-except Exception as e:
-    # Handle error appropriately
-    print(f"Error: {e}")
-```
-
 ### Resource Management
 
-Use context managers to ensure proper cleanup:
+Use context managers for automatic cleanup:
 
 ```python
-# Good: Automatic cleanup
 with GoDaddyClient() as client:
     result = client.check('example.com')
-
-# Also good: Manual cleanup
-client = GoDaddyClient()
-try:
-    result = client.check('example.com')
-finally:
-    client.close()
-```
-
-### Type Hints
-
-The package uses type hints for better IDE support:
-
-```python
-from godaddycheck import GoDaddyClient
-from typing import Dict, Any
-
-def check_domain(domain: str) -> Dict[str, Any]:
-    client = GoDaddyClient()
-    return client.check(domain)
 ```
 
 ## License
