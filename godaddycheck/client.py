@@ -88,11 +88,6 @@ class GoDaddyClient:
             if price_float >= 1_000_000:
                 return price_float / 1_000_000
             
-            # Handle cents (values >= 1000 but < 1,000,000)
-            # Note: prices < 1000 are likely already in dollars
-            if price_float >= 1000:
-                return price_float / 100
-            
             # Already in dollars
             return price_float
         except (ValueError, TypeError):
